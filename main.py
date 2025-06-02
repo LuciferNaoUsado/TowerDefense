@@ -15,7 +15,8 @@ from config import (
     SCALE_X,
     SCALE_Y,
     ICON_BASE_SIZE,
-    update_screen_size
+    update_screen_size,
+    DRAW_PATH
 )
 from game_state import game_state
 from levels import LevelManager, LEVELS
@@ -304,14 +305,16 @@ def main():
         else:
             screen.fill(BG_COLOR)
 
-        # 12) DESENHA O “PATH” (caminho cinza)
-        if current_level < len(paths.PATHS):
+        # 12) DESENHA O “PATH” (caminho cinza) apenas se DRAW_PATH for True
+        from config import DRAW_PATH  # certifique-se de importar no topo do main.py, se ainda não importou
+        if DRAW_PATH and (current_level < len(paths.PATHS)):
             paths.draw_path(current_level, screen)
 
         # 13) DESENHA INIMIGOS, TORRES E PROJÉTEIS
         enemies.draw(screen)
         towers.draw(screen)
         bullets.draw(screen)
+
 
         # 14) HUD: ÍCONES DE DINHEIRO E VIDA + TEXTO
         hud_x = max(int(10 * SCALE), 1)

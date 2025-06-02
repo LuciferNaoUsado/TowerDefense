@@ -9,8 +9,8 @@ BASE_HEIGHT = 1024
 # —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
 # RESOLUÇÃO ATUAL DA JANELA (INICIAL, PODE SER REDIMENSIONADA)
 # —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
-SCREEN_WIDTH  = 1200
-SCREEN_HEIGHT = 900
+SCREEN_WIDTH  = 1536
+SCREEN_HEIGHT = 1024
 
 # — FPS —
 FPS = 60
@@ -25,6 +25,12 @@ SCALE   = min(SCALE_X, SCALE_Y)
 # — Cores de fallback para desenhar o path manualmente, se necessário —
 BG_COLOR   = (30, 30, 30)
 PATH_COLOR = (60, 60, 60)
+
+# —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
+# FLAG PARA DESENHAR O CAMINHO “PATH”  
+# Caso seja False, o path NÃO será desenhado em main.py  
+# —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
+DRAW_PATH = True
 
 # —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
 # DINHEIRO INICIAL E CUSTOS DE TORRES/UPGRADES
@@ -51,13 +57,13 @@ ENEMY_REWARD = {
 # TEMPO ENTRE SPAWNS DE INIMIGOS E ENTRE ONDAS
 # —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
 # Tempo (ms) base entre inimigos de uma mesma onda (intra‐wave)
-INTRA_WAVE_DELAY = 1000
+INTRA_WAVE_DELAY  = 1000
 
 # Variabilidade (± ms) para o intervalo entre inimigos
 INTRA_WAVE_RANDOM = 200
 
 # Tempo (ms) base entre o fim de uma onda e o início da próxima (inter‐wave)
-INTER_WAVE_DELAY = 10000
+INTER_WAVE_DELAY  = 6000
 
 # Variabilidade (± ms) para o intervalo entre ondas
 INTER_WAVE_RANDOM = 800
@@ -67,7 +73,7 @@ INTER_WAVE_RANDOM = 800
 # —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
 BACKGROUND_FILES = [
     "assets/L1.png",
-    "assets/L2.png",  # se houver Level 2
+    "assets/L2.png",
 ]
 
 # —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
