@@ -8,8 +8,8 @@ from config import SCALE, BULLET_BASE_SIZE
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, pos_screen, target, damage=1, speed=5, image_path=None):
         """
-        pos_screen: (x, y) em coordenadas de tela (já escaladas) de onde dispara.
-        target: instância de Enemy (com rect.center em tela).
+        pos_screen: (x, y) em coordenadas de tela (já escaladas) onde a torre disparou.
+        target: instância de Enemy (com .rect.center em coordenadas de tela).
         """
         super().__init__()
         self.pos = list(pos_screen)
@@ -19,9 +19,9 @@ class Bullet(pygame.sprite.Sprite):
 
         if image_path:
             img = pygame.image.load(image_path).convert_alpha()
-            # Redimensiona para BULLET_BASE_SIZE × BULLET_BASE_SIZE (na base)
+            # Redimensiona para (BULLET_BASE_SIZE × BULLET_BASE_SIZE)
             img = pygame.transform.scale(img, (BULLET_BASE_SIZE, BULLET_BASE_SIZE))
-            # Agora escalar para (BULLET_BASE_SIZE × SCALE)
+            # Agora redimensiona para a tela: (BULLET_BASE_SIZE×SCALE)
             size = max(int(BULLET_BASE_SIZE * SCALE), 1)
             self.image = pygame.transform.scale(img, (size, size))
         else:

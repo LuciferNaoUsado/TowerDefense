@@ -4,7 +4,6 @@ class GameState:
     """
     Gerencia dinheiro e vidas do jogador.
     """
-
     def __init__(self):
         self.money = 0
         self.lives = 10
@@ -20,6 +19,5 @@ class GameState:
 
     def lose_life(self):
         self.lives -= 1
-
 
 game_state = GameState()

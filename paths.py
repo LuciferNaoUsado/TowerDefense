@@ -3,27 +3,27 @@
 import pygame
 from config import PATH_COLOR, SCALE_X, SCALE_Y
 
-# Cada lista em PATHS[] é a sequência de waypoints (x, y) na BASE 1536×1024
+# Cada lista em PATHS[] é a sequência de waypoints (x, y) na base 1536×1024
 PATHS = [
     # ===== Level 1 =====
     [
-        (-50, 1014),   # 1) Entrada fora da tela à esquerda (y = 1024 − 10)
-        (200,  800),   # 2) Diagonal até (200,800)
-        (600,  800),   # 3) Reto até (600,800)
-        (600,  600),   # 4) Sobe até (600,600)
-        (1000, 600),   # 5) Reto até (1000,600)
-        (1000, 200),   # 6) Sobe até (1000,200)
-        (1400, 200),   # 7) Reto até (1400,200)
-        (1586, 200),   # 8) Saída fora da tela à direita (1536 + 50 = 1586, y = 200)
+        (-50, 1014),   # 1) Entrada fora da tela à esquerda
+        (200,  800),   # 2) Vai para (200,800)
+        (600,  800),   # 3) Vai para (600,800)
+        (600,  600),   # 4) Vai para (600,600)
+        (1000, 600),   # 5) Vai para (1000,600)
+        (1000, 200),   # 6) Vai para (1000,200)
+        (1400, 200),   # 7) Vai para (1400,200)
+        (1586, 200),   # 8) Saída fora da tela à direita
     ],
 
-    # ===== Level 2 (exemplo) =====
+    # ===== Level 2 =====
     # [
-    #     (-50,  500),
-    #     (300,  500),
-    #     (300,  300),
-    #     (900,  300),
-    #     (900,  700),
+    #     (-50, 500),
+    #     (300, 500),
+    #     (300, 300),
+    #     (900, 300),
+    #     (900, 700),
     #     (1586, 700)
     # ],
 ]

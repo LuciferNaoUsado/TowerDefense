@@ -12,7 +12,7 @@ from config import (
 
 class LevelManager:
     """
-    Gerencia o spawn de inimigos em “ondas” (waves) com:
+    Gerencia spawn de inimigos em “ondas” (waves) com:
       - intervalo entre cada inimigo em uma mesma onda (intra-wave),
       - intervalo entre o fim de uma onda e o início da próxima (inter-wave),
       - randomização leve nesses intervalos.
@@ -20,34 +20,34 @@ class LevelManager:
 
     def __init__(self, waves):
         """
-        waves: lista de tuplas [(EnemyClass, quantidade), ...]
+        waves: lista de tuplas [(EnemyClass, quantidade), …]
         """
         self.waves = waves
         self.current_wave = 0
-        # Vamos usar um evento fixo para todos os spawns
+        # Evento único para todos os spawns
         self.spawn_event = pygame.USEREVENT + 1
         self.finished = False
 
-        # --- Estado interno para controlar spawn dentro da wave ---
-        self._intra_queue = []           # fila de EnemyClasses a serem gerados na onda atual
-        self._waiting_inter_delay = False  # sinaliza se estamos aguardando inter-wave
+        # Estado interno:
+        self._intra_queue = []            # fila de EnemyClasses a spawnar na wave atual
+        self._waiting_inter_delay = False # sinaliza se estamos aguardando inter-wave
 
     def start_level(self):
         """
-        Inicia o nivel: prepara a wave 0 e marca um timer para spawn do 1º inimigo.
+        Inicia o level: prepara a primeira wave e agenda o primeiro spawn.
         """
         self.current_wave = 0
         self.finished = False
         self._waiting_inter_delay = False
 
-        # Prepara a fila de inimigos da primeira wave
+        # Prepara a fila da primeira wave
         self._prepare_wave()
-        # Agenda o primeiro spawn (usando intervalo intra-wave)
+        # Agenda o primeiro spawn (intra-wave)
         self._schedule_next_spawn()
 
     def _prepare_wave(self):
         """
-        Carrega a lista interna _intra_queue com N cópias de EnemyClass da wave atual.
+        Carrega _intra_queue com N cópias de EnemyClass da wave atual.
         """
         EnemyClass, quantity = self.waves[self.current_wave]
         self._intra_queue = [EnemyClass] * quantity
@@ -55,79 +55,71 @@ class LevelManager:
     def _schedule_next_spawn(self):
         """
         Agenda o próximo evento self.spawn_event após um intervalo calculado:
-         - Se estiver dentro de uma wave (com _intra_queue não vazia), usa
-           INTRA_WAVE_DELAY ± INTRA_WAVE_RANDOM
-         - Se _intra_queue acabou e ainda existem waves, usa
-           INTER_WAVE_DELAY ± INTER_WAVE_RANDOM
-         - Se for fornecido delay extra (não há argumento aqui), poderíamos usar ele diretamente.
+          - Se ainda houver inimigos em _intra_queue, intervalo intra-wave:
+            INTRA_WAVE_DELAY ± INTRA_WAVE_RANDOM
+          - Senão, se houver próxima wave, intervalo inter-wave:
+            INTER_WAVE_DELAY ± INTER_WAVE_RANDOM
         """
-        # Cancelamos qualquer timer anterior para evitar duplicatas
+        # Desliga qualquer timer anterior para evitar duplicatas
         pygame.time.set_timer(self.spawn_event, 0)
 
         if self._intra_queue:
-            # Ainda existem inimigos nesta wave → intervalo intra-wave
+            # Ainda há inimigos nesta wave → intervalo intra-wave
             base = INTRA_WAVE_DELAY
             jitter = random.uniform(-INTRA_WAVE_RANDOM, INTRA_WAVE_RANDOM)
-            interval = max(int(base + jitter), 50)  # mínimo 50ms
+            interval = max(int(base + jitter), 50)
         else:
-            # A wave atual acabou; se houver próxima wave, aguardamos intervalo inter-wave
+            # Fim da wave atual → se houver próxima wave, intervalo inter-wave
             base = INTER_WAVE_DELAY
             jitter = random.uniform(-INTER_WAVE_RANDOM, INTER_WAVE_RANDOM)
-            interval = max(int(base + jitter), 100)  # mínimo 100ms
+            interval = max(int(base + jitter), 100)
 
         pygame.time.set_timer(self.spawn_event, interval)
 
     def spawn_next(self, enemies_group, level_index=0):
         """
-        Chamado quando o evento self.spawn_event é capturado no loop principal.
-        1) Se houver items em self._intra_queue, faz spawn de 1 inimigo.
-            - Se ainda restarem inimigos, agenda próximo spawn intra-wave.
-            - Se acabou a fila _intra_queue, agenda intervalo inter-wave e marca _waiting_inter_delay = True.
-        2) Se _intra_queue vazio e _waiting_inter_delay == True:
-            - Isso significa que o inter-wave delay terminou; passa para próxima wave ou finaliza.
+        Chamado quando self.spawn_event é capturado no main loop:
+        1) Se _intra_queue não vazio → spawna 1 inimigo, depois agenda próximo intra-wave
+        2) Se _intra_queue vazio e _waiting_inter_delay == False → acabou a wave, inicia inter-wave
+        3) Se _waiting_inter_delay == True → inter-wave acabou, avança para próxima wave ou finaliza
         """
-        # Desliga o timer imediatamente para evitar novos triggers duplicados
+        # Desliga o timer atual para evitar múltiplos triggers
         pygame.time.set_timer(self.spawn_event, 0)
 
-        # 1) Caso ainda existam inimigos na fila interna (intra_queue):
+        # 1) Spawn individual dentro da wave
         if self._intra_queue:
             EnemyClass = self._intra_queue.pop(0)
             enemies_group.add(EnemyClass(level_index))
 
-            # Ainda restam inimigos nesta wave?
+            # Se ainda restam inimigos nesta wave, agenda próximo intra-wave
             if self._intra_queue:
-                # Agenda próximo spawn dentro desta mesma wave
                 self._schedule_next_spawn()
             else:
-                # Terminou de spawnar todos os inimigos desta wave.
-                # Agora entra no estado “aguardando inter-wave”:
+                # Esta wave terminou; agora aguardaremos o intervalo inter-wave
                 self._waiting_inter_delay = True
                 self._schedule_next_spawn()
             return
 
-        # 2) Se chegou aqui, _intra_queue está vazio
-        #    e estamos aguardando o inter-wave:
+        # 2) Se _intra_queue está vazio e estamos aguardando inter-wave
         if self._waiting_inter_delay:
             self._waiting_inter_delay = False
             self.current_wave += 1
 
             if self.current_wave < len(self.waves):
-                # Ainda há próxima wave: prepara e spawna primeiro inimigo
+                # Há próxima wave: prepara e spawna o primeiro inimigo
                 self._prepare_wave()
                 self._schedule_next_spawn()
             else:
-                # Não há mais waves: terminou o nível
+                # Não há mais waves: marca nível como finalizado
                 self.finished = True
             return
 
-        # 3) Se chegou aqui e não está aguardando inter-wave, e _intra_queue vazio,
-        #    significa que as waves acabaram (finished=True) ou spawn_next foi
-        #    chamado indevidamente — não faz nada.
+        # 3) Senão (possível chamada indevida), não faz nada
         return
 
 
-# === Definição das ondas por nível ===
-#    Cada nível é uma lista de (ClasseDeInimigo, quantidade)
+# === Definição das ondas em cada nível ===
+# Cada nível é uma LISTA DE TUPLAS (ClasseDeInimigo, quantidade)
 LEVELS = [
     # ===== Level 1 =====
     [
@@ -142,5 +134,5 @@ LEVELS = [
         (FastEnemy, 4),
     ],
 
-    # Você pode adicionar mais níveis aqui, no mesmo formato.
+    # Você pode adicionar mais níveis seguindo o mesmo formato
 ]

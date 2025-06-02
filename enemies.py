@@ -10,16 +10,16 @@ from game_state import game_state
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, level_index=0):
         super().__init__()
-        # Pega a lista de waypoints (em base 1536×1024) do level
+        # Pega a lista de waypoints (em base 1536×1024) do level correspondente
         self.base_path = paths.PATHS[level_index]
         self.waypoint = 0
+        # Posição base: inicia no primeiro ponto
         self.pos_base = [self.base_path[0][0], self.base_path[0][1]]
         self.hp = 3
         self.speed = 1.0
         self.reward = 5
 
-        # Sprite placeholder (círculo vermelho) — substituído pelos subtipos
-        # tamanho_em_tela = ENEMY_BASE_SIZE × SCALE
+        # Placeholder circular (será sobrescrito pelas classes filhas)
         size = max(int(ENEMY_BASE_SIZE * SCALE), 1)
         img = pygame.Surface((size, size), pygame.SRCALPHA)
         pygame.draw.circle(img, (200, 50, 50), (size // 2, size // 2), size // 2)
@@ -27,7 +27,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def update(self):
-        # Se já chegou ao último waypoint, perde vida e é removido
+        # Se já chegou ao último waypoint, reduz vida e mata o sprite
         if self.waypoint + 1 >= len(self.base_path):
             game_state.lose_life()
             self.kill()
@@ -45,7 +45,7 @@ class Enemy(pygame.sprite.Sprite):
             self.pos_base[0] += dx / dist * self.speed
             self.pos_base[1] += dy / dist * self.speed
 
-        # Converte posição base → posição de tela (SCALE_X, SCALE_Y) para ajustar rect
+        # Converte posição base → posição em tela (via SCALE_X e SCALE_Y)
         from config import SCALE_X, SCALE_Y
         real_x = int(self.pos_base[0] * SCALE_X)
         real_y = int(self.pos_base[1] * SCALE_Y)
@@ -65,9 +65,9 @@ class BasicEnemy(Enemy):
         self.reward = ENEMY_REWARD["BasicEnemy"]
 
         img = pygame.image.load("assets/enemy_basic.png").convert_alpha()
-        # Reescalona o imagem original (supondo que seja 24×24 px) para ENEMY_BASE_SIZE × ENEMY_BASE_SIZE
+        # 1) escala para (ENEMY_BASE_SIZE × ENEMY_BASE_SIZE)
         img = pygame.transform.scale(img, (ENEMY_BASE_SIZE, ENEMY_BASE_SIZE))
-        # Agora, reescalona para o tamanho EM TELA = ENEMY_BASE_SIZE × SCALE
+        # 2) escala para (ENEMY_BASE_SIZE × SCALE)
         size = max(int(ENEMY_BASE_SIZE * SCALE), 1)
         self.image = pygame.transform.scale(img, (size, size))
         self.rect = self.image.get_rect()

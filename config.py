@@ -51,13 +51,13 @@ ENEMY_REWARD = {
 # TEMPO ENTRE SPAWNS DE INIMIGOS E ENTRE ONDAS
 # —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
 # Tempo (ms) base entre inimigos de uma mesma onda (intra‐wave)
-INTRA_WAVE_DELAY = 500
+INTRA_WAVE_DELAY = 1000
 
 # Variabilidade (± ms) para o intervalo entre inimigos
 INTRA_WAVE_RANDOM = 200
 
 # Tempo (ms) base entre o fim de uma onda e o início da próxima (inter‐wave)
-INTER_WAVE_DELAY = 2000
+INTER_WAVE_DELAY = 10000
 
 # Variabilidade (± ms) para o intervalo entre ondas
 INTER_WAVE_RANDOM = 800
@@ -71,8 +71,8 @@ BACKGROUND_FILES = [
 ]
 
 # —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
-# TAMANHOS “BASE” DOS SPRITES NAS DIMENSÕES 1536×1024
-#   Cada sprite será escalado para (BASE_SIZE × SCALE) na janela atual
+# TAMANHOS “BASE” DOS SPRITES NA RESOLUÇÃO 1536×1024
+# Cada sprite será escalado para (BASE_SIZE × SCALE) na janela atual
 # —––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––—
 ENEMY_BASE_SIZE  = 48    # inimigos serão 48×48 na base
 TOWER_BASE_SIZE  = 64    # torres serão 64×64 na base
