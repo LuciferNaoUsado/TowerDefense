@@ -1,0 +1,17 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.log
+
+# Windows / macOS temporários
+Thumbs.db
+.DS_Store
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Assets gerados
+*.db
+*.sqlite3
